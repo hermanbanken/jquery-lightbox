@@ -30,7 +30,7 @@ function lightbox_jq_options_page() {
 	add_options_page('Lightbox Options', 'Lightbox 2', 10, 'lightbox-jq/options.php');
 }
 
-function lightbox_styles() {
+function jq_lightbox_styles() {
 	/* What version of WP is running? */
 	global $wp_version;
 	global $jq_lightbox_plugin_prefix;
@@ -76,6 +76,6 @@ if (!is_admin()) { // if we are *not* viewing an admin page, like writing a post
 	wp_enqueue_script('lightbox-jq');
 
 /* we want to add the above xhtml to the header of our pages: */
-add_action('wp_head', 'lightbox_styles');
+add_action('wp_head', 'jq_lightbox_styles');
 add_action('admin_menu', 'lightbox_jq_options_page');
 ?>
