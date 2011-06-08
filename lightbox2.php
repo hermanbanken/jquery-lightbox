@@ -14,17 +14,20 @@ class LightboxJQ {
 	public $automate = true;
 	public $resize = false;
 	public $optionspage = 'lightboxjq';
+	public $download = false;
 	
 	public function __construct(){
+		$this->get_vars();
+		
 		add_action('init', array($this, 'init'));
 		add_action('wp_head', array($this, 'add_style'));
-		add_action('wp_head', array($this, 'lighter'));
 		add_action('admin_menu', array($this, 'menu'));	
+	
+		if( $this->automate )
+			add_action('wp_head', array($this, 'lighter'));	
 	}
 	
 	public function init(){
-		$this->get_vars();
-		
 		// Register filters and scripts
 		$jsfile = plugins_url( "jquery.lightbox.js", __FILE__);
 		wp_register_script( 'lightbox-jq', $jsfile, array('jquery'), '2.9' );
@@ -45,6 +48,7 @@ class LightboxJQ {
 		$this->theme = get_option('lightbox_jq_theme');
 		$this->automate = get_option('lightbox_jq_automate');
 		$this->resize = get_option('lightbox_jq_resize');
+		$this->download = get_option('lightbox_jq_download');
 	}
 
 	public function menu(){
@@ -96,33 +100,22 @@ class LightboxJQ {
 		jQuery(document).ready(function(){
 			var rels = {};
 			jQuery("a[rel^=lightbox]").lightbox({
-					fitToScreen: true,
+					fitToScreen: <?php echo $this->resize ? 'true' : 'false'; ?>,
 			    	scaleImages: true,
 			    	xScale: 1.2,
 			    	yScale: 1.2,
-			    	displayDownloadLink: true,
-			    	imageClickClose: false		
+			    	displayDownloadLink: <?php echo $this->download ? 'true' : 'false'; ?>,
+			    	imageClickClose: false	
 			});
-			/*for(rel in rels){
-				console.log(jQuery("a").filter(function(){
-					return (jQuery(this).attr("rel") == rel);
-				}).lightbox({
-					fitToScreen: true,
-			    	scaleImages: true,
-			    	xScale: 1.2,
-			    	yScale: 1.2,
-			    	displayDownloadLink: true,
-			    	imageClickClose: false		
-				}));
-			}*/
 		});
 	</script><?php }
 		
 	public function options_page(){
 		if($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['lightbox_jq_theme'])){
 			update_option('lightbox_jq_theme', $_POST['lightbox_jq_theme']);
-			update_option('lightbox_jq_automate', $_POST['lightbox_jq_automate']);
-			update_option('lightbox_jq_resize', $_POST['lightbox_jq_resize']);
+			update_option('lightbox_jq_automate', $_POST['lightbox_jq_automate'] ? '1' : '0');
+			update_option('lightbox_jq_resize', $_POST['lightbox_jq_resize'] ? '1' : '0');
+			update_option('lightbox_jq_download', $_POST['lightbox_jq_download'] ? '1' : '0');
 			$this->get_vars();
 			echo "<h1>Updating vars</h1>";
 		}
@@ -166,6 +159,14 @@ class LightboxJQ {
 						_e('Note: <u>Excessively large images</u> waste bandwidth '.
 						   'and slow browsing!', 'lightbox_jq');
 					?></small></p>
+					</td></tr>
+					<tr valign="baseline">
+					<th scope="row"><?php 
+						_e('Display download link', 'lightbox_jq') ?></th> 
+					<td><?php
+						$cd = $this->download ? 'checked' : '';
+						echo "<input type='checkbox' name='lightbox_jq_download' value='1' $cd />";
+					?>
 					</td>
 			    	</tr>
 				</table>
@@ -177,21 +178,6 @@ class LightboxJQ {
 		</div>
 	<?php }
 }
-
-/*
-var rels = {};
-jQuery("a[rel^=lightbox]").each(function(){ rels[jQuery(this).attr('rel')] = true; });
-for(rel in rels){
-	jQuery("a[rel="+rel+"]").lightbox({
-		fitToScreen: true,
-	    scaleImages: true,
-	    xScale: 1.2,
-	    yScale: 1.2,
-	    displayDownloadLink: true,
-	    imageClickClose: false		
-	});
-}
-*/
 
 new LightboxJQ();
 ?>
