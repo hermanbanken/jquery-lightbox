@@ -57,7 +57,7 @@ If there are already rel="lightbox[something]" attributes, they are not clobbere
 Michael Tyson, you are a regular expressions god! ;) 
 http://atastypixel.com
 */
-function autoexpand_rel_wlightbox ($content) {
+function jq_autoexpand_rel_wlightbox ($content) {
 	global $post;
 	$pattern        = "/(<a(?![^>]*?rel=['\"]lightbox.*)[^>]*?href=['\"][^'\"]+?\.(?:bmp|gif|jpg|jpeg|png)['\"][^\>]*)>/i";
 	$replacement    = '$1 rel="lightbox['.$post->ID.']">';
@@ -66,8 +66,8 @@ function autoexpand_rel_wlightbox ($content) {
 }
 
 if (get_option('lightbox_jq_automate') == 1){
-	add_filter('the_content', 'autoexpand_rel_wlightbox', 99);
-	add_filter('the_excerpt', 'autoexpand_rel_wlightbox', 99);
+	add_filter('the_content', 'jq_autoexpand_rel_wlightbox', 99);
+	add_filter('the_excerpt', 'jq_autoexpand_rel_wlightbox', 99);
 }
 
 wp_register_script( 'lightbox-jq', $jq_lightbox_plugin_prefix.'lightbox.js', array('jquery'), '2.9' );
