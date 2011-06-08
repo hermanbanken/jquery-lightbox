@@ -12,7 +12,7 @@ class LightboxJQ {
 	public $plugin_path = "";
 	public $theme = "Black";
 	public $automate = true;
-	public $resize = false;
+	public $resize = true;
 	public $optionspage = 'lightboxjq';
 	public $download = false;
 	
